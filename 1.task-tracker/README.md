@@ -44,33 +44,3 @@ task-cli list
 task-cli list done
 task-cli list todo
 task-cli list in-progress
-
-
-Installation
-1. Clone the repository:
-git clone https://github.com/yourusername/projects.git
-
-2. Navigate to the project folder:
-cd projects/1.task-tracker
-
-3. Run the program:
-go run main.go
-
-
-How it works
-
-1. Tasks are stored in memory while the program is running.
-
-2. Any changes (add/update/delete/mark) are immediately saved to tasks.json using JSON persistence.
-
-3. When the program starts, it loads existing tasks from tasks.json.
-
-4. Each command modifies the task list and updates the timestamps automatically.
-
-Notes
-
-Make sure to run commands inside the 1.task-tracker folder.
-
-The JSON file is automatically created if it doesn’t exist.
-
-Handle tasks carefully: deleting a task reorders IDs automatically.
