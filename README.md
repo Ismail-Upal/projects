@@ -13,4 +13,5 @@ Each project demonstrates my understanding of Go, including:
 ## Project Index
 
 ### 1. [Task Tracker CLI](https://github.com/Ismail-Upal/projects/tree/main/1.task-tracker)
+Link : https://github.com/Ismail-Upal/projects/tree/main/1.task-tracker
 A command-line interface (CLI) to manage tasks with JSON persistence. 
