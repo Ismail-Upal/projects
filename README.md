@@ -9,3 +9,8 @@ Each project demonstrates my understanding of Go, including:
 - CLI application development
 - Web APIs and RESTful design
 - Error handling, testing, and project organization
+
+## Project Index
+
+### 1. [Task Tracker CLI](https://github.com/Ismail-Upal/projects/tree/main/1.task-tracker)
+A command-line interface (CLI) to manage tasks with JSON persistence. 
