@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "description": "Buy groceries",
+    "status": {
+      "todo": true,
+      "in_progress": false,
+      "done": false
+    },
+    "createdAt": "2025-10-04T19:56:01.9927395+06:00",
+    "updatedAt": "2025-10-04T19:56:01.9927395+06:00"
+  },
+  {
+    "id": 2,
+    "description": "Buy groceries",
+    "status": {
+      "todo": true,
+      "in_progress": false,
+      "done": false
+    },
+    "createdAt": "2025-10-04T19:56:02.6040134+06:00",
+    "updatedAt": "2025-10-04T19:56:02.6040134+06:00"
+  }
+]
