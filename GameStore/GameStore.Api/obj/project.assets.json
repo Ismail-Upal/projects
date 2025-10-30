@@ -2479,11 +2479,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\C# dotnet\\GameStore\\GameStore.Api\\GameStore.Api.csproj",
+      "projectUniqueName": "D:\\Simple Projects\\projects\\GameStore\\GameStore.Api\\GameStore.Api.csproj",
       "projectName": "GameStore.Api",
-      "projectPath": "D:\\C# dotnet\\GameStore\\GameStore.Api\\GameStore.Api.csproj",
+      "projectPath": "D:\\Simple Projects\\projects\\GameStore\\GameStore.Api\\GameStore.Api.csproj",
       "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-      "outputPath": "D:\\C# dotnet\\GameStore\\GameStore.Api\\obj\\",
+      "outputPath": "D:\\Simple Projects\\projects\\GameStore\\GameStore.Api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -2509,8 +2509,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -2550,7 +2549,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.415/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
