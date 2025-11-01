@@ -1,24 +1,52 @@
-using System;
-using System.Net.Http.Headers;
 using GameStore.Api.Data;
+using GameStore.Api.Dtos;
 using GameStore.Api.Entities;
-using GameStore.Api.Mapping;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using Microsoft.AspNetCore.OpenApi;
 
 namespace GameStore.Api.Endpoints;
 
 public static class GenresEndpoints
 {
-    public static RouteGroupBuilder MapGenresEndpoints(this WebApplication app)
+    public static void MapGenresEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("genres");
+        var genres = app.MapGroup("/genres");
 
-        group.MapGet("/", async (GameStoreContext dbContext) =>
-            await dbContext.Genres
-                            .Select(genre => genre.ToDto())
-                            .AsNoTracking()
-                            .ToListAsync()
-        );
-        return group;
+        genres.MapGet("/", async (GameStoreDbContext db) => await db.Genres.ToListAsync())
+              .Produces<List<GenreDto>>();
+
+        genres.MapGet("/{id}", async (int id, GameStoreDbContext db) =>
+        {
+            var genre = await db.Genres.FindAsync(id);
+            return genre is null ? Results.NotFound() : Results.Ok(genre);
+        })
+              .Produces<GenreDto>(200)
+              .Produces(404);
+
+        genres.MapPost("/", async (GenreDto genreDto, GameStoreDbContext db, IMapper mapper) =>
+        {
+            var genre = mapper.Map<Genre>(genreDto);
+            db.Genres.Add(genre);
+            await db.SaveChangesAsync();
+            return Results.Created($"/genres/{genre.Id}", genre);
+        });
+
+        genres.MapPut("/{id}", async (int id, GenreDto genreDto, GameStoreDbContext db, IMapper mapper) =>
+        {
+            var genre = await db.Genres.FindAsync(id);
+            if (genre is null) return Results.NotFound();
+            mapper.Map(genreDto, genre);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        });
+
+        genres.MapDelete("/{id}", async (int id, GameStoreDbContext db) =>
+        {
+            var genre = await db.Genres.FindAsync(id);
+            if (genre is null) return Results.NotFound();
+            db.Genres.Remove(genre);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        });
     }
 }

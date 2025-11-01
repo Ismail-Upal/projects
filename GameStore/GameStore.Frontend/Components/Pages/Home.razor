@@ -14,7 +14,7 @@
 else if (loadError || games.Length == 0)
 {
     <div class="alert alert-warning mt-3">
-        No games found. Check if backend API is running (e.g., at http://localhost:5299).
+        No games found. Check backend[](http://localhost:5299) or console.
     </div>
 }
 else
@@ -44,9 +44,7 @@ else
                             <a class="btn btn-primary me-2" role="button" href="@GameUrl(game.Id)">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <button class="btn btn-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="@GetDeleteModalId(game)">
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </div>
@@ -67,20 +65,17 @@ else
         try
         {
             games = await Client.GetGamesAsync();
-            loadError = (games?.Length ?? 0) == 0; // Set if empty (could be API issue)
+            loadError = (games?.Length ?? 0) == 0;
         }
         catch (Exception ex)
         {
             loadError = true;
             games = Array.Empty<GameSummary>();
-            Console.WriteLine($"Error loading games: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 
     private static string GameUrl(int id) => $"/editgame/{id}";
 
-    private string GetDeleteModalId(GameSummary game)
-    {
-        return $"#{DeleteGame.GetModalId(game)}";
-    }
+    private string GetDeleteModalId(GameSummary game) => $"#{DeleteGame.GetModalId(game)}";
 }

@@ -1,9 +1,10 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.Api.Entities;
 
 public class Genre
 {
     public int Id { get; set; }
-    public required string Name { get; set; } 
+    [Required]
+    public string Name { get; set; } = string.Empty;
 }

@@ -1,4 +1,3 @@
-using System.Net.Http;
 using System.Net.Http.Json;
 using GameStore.Frontend.Models;
 
@@ -19,13 +18,7 @@ public class GamesClient
     {
         try
         {
-            var result = await httpClient.GetFromJsonAsync<GameSummary[]>("games");
-            return result ?? Array.Empty<GameSummary>();
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            Console.WriteLine("Backend not found—ensure API is running at GameStoreApiUrl.");
-            return Array.Empty<GameSummary>();
+            return await httpClient.GetFromJsonAsync<GameSummary[]>("games") ?? Array.Empty<GameSummary>();
         }
         catch (Exception ex)
         {
@@ -34,15 +27,23 @@ public class GamesClient
         }
     }
 
+    public async Task<GameDetails?> GetGameAsync(int id)
+    {
+        try
+        {
+            return await httpClient.GetFromJsonAsync<GameDetails>($"games/{id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching game {id}: {ex.Message}");
+            return null;
+        }
+    }
+
     public async Task AddGameAsync(GameDetails game)
     {
         try
         {
-            ArgumentNullException.ThrowIfNull(game.GenreId);
-            var genres = await genresClient.GetGenresAsync();
-            var genre = genres.SingleOrDefault(g => g.Id == game.GenreId.Value);
-            if (genre is null) throw new InvalidOperationException("Invalid genre ID.");
-
             await httpClient.PostAsJsonAsync("games", game);
         }
         catch (Exception ex)
@@ -52,27 +53,11 @@ public class GamesClient
         }
     }
 
-    public async Task<GameDetails> GetGameAsync(int id)
+    public async Task UpdateGameAsync(GameDetails game)
     {
         try
         {
-            var result = await httpClient.GetFromJsonAsync<GameDetails>($"games/{id}");
-            ArgumentNullException.ThrowIfNull(result);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error fetching game {id}: {ex.Message}");
-            throw;
-        }
-    }
-
-    public async Task UpdateGameAsync(GameDetails updatedGame)
-    {
-        try
-        {
-            ArgumentNullException.ThrowIfNull(updatedGame.GenreId);
-            await httpClient.PutAsJsonAsync($"games/{updatedGame.Id}", updatedGame);
+            await httpClient.PutAsJsonAsync($"games/{game.Id}", game);
         }
         catch (Exception ex)
         {

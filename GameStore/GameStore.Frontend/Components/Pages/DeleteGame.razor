@@ -1,54 +1,39 @@
 ﻿@inject GamesClient Client
+@inject NavigationManager Navigation
 @using GameStore.Frontend.Models
-@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<div class="modal fade" id="@GetModalId(Game)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">@title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-danger" @onclick="Confirm">Delete</button>
-      </div>
+<div class="modal fade" id="@GetModalId(Game)" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Delete @Game?.Name?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="Confirm">Delete</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 @code {
-    [Parameter]
-    public GameSummary? Game { get; set; }
+    [Parameter] public GameSummary? Game { get; set; }
 
-    private string title = string.Empty;
-
-    protected override void OnParametersSet()
-    {
-        title = $"Delete {Game?.Name}?";
-    }
-
-    public static string GetModalId(GameSummary? game)
-    {
-        ArgumentNullException.ThrowIfNull(game);
-        return $"deleteModal-{game.Id}";
-    }
+    public static string GetModalId(GameSummary game) => $"deleteModal-{game.Id}";
 
     private async Task Confirm()
     {
         if (Game is null) return;
-
         try
         {
             await Client.DeleteGameAsync(Game.Id);
-            // Close modal via JS if needed, but navigate will handle
-            NavigationManager.NavigateTo("/", forceLoad: false); // Sync, SPA refresh
+            Navigation.NavigateTo("/", forceLoad: true); // Refresh list
         }
         catch (Exception ex)
         {
-            // TODO: Log / show error
-            Console.WriteLine($"Error deleting game: {ex.Message}");
+            Console.WriteLine($"Delete error: {ex.Message}");
         }
     }
 }

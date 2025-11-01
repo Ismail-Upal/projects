@@ -16,12 +16,11 @@ builder.Services.AddHttpClient<GamesClient>(client =>
 builder.Services.AddHttpClient<GenresClient>(client =>
     client.BaseAddress = new Uri(gameStoreApiUrl));
 
-// Register GamesClient with GenresClient dependency
-builder.Services.AddScoped<GamesClient>();
+builder.Services.AddScoped<GamesClient>(); // For dep injection
 
 var app = builder.Build();
 
-// HTTP request pipeline
+// Pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

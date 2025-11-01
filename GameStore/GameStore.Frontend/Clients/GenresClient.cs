@@ -1,6 +1,5 @@
-using System;
+using System.Net.Http.Json;
 using GameStore.Frontend.Models;
-using System.Net.Http;
 
 namespace GameStore.Frontend.Clients;
 
@@ -17,13 +16,7 @@ public class GenresClient
     {
         try
         {
-            var result = await httpClient.GetFromJsonAsync<Genre[]>("genres");
-            return result ?? Array.Empty<Genre>();
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            Console.WriteLine("Genres endpoint not found—ensure backend is running.");
-            return Array.Empty<Genre>();
+            return await httpClient.GetFromJsonAsync<Genre[]>("genres") ?? Array.Empty<Genre>();
         }
         catch (Exception ex)
         {

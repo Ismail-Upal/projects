@@ -1,10 +1,10 @@
 namespace GameStore.Api.Dtos;
 
-public record class GameSummaryDto(
-    int Id,
-    string Name,
-    string Genre,
-    decimal Price,
-    DateOnly ReleaseDate
-);
-
+public class GameSummaryDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Genre { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public DateOnly ReleaseDate { get; set; }
+}
