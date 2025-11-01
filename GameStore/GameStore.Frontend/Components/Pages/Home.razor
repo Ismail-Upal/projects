@@ -1,7 +1,86 @@
 ﻿@page "/"
+@inject GamesClient Client
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Game Catalog</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="mt-2">
+    <a class="btn btn-primary" role="button" href="/editgame">New Game</a>
+</div>
 
-Welcome to your new app.
+@if (games is null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (loadError || games.Length == 0)
+{
+    <div class="alert alert-warning mt-3">
+        No games found. Check if backend API is running (e.g., at http://localhost:5299).
+    </div>
+}
+else
+{
+    <table class="table table-striped-columns table-bordered table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Genre</th>
+                <th class="text-end">Price</th>
+                <th>Release Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in games)
+            {
+                <tr>
+                    <td>@game.Id</td>
+                    <td>@game.Name</td>
+                    <td>@game.Genre</td>
+                    <td class="text-end">@game.Price.ToString("C2")</td>
+                    <td>@game.ReleaseDate</td>
+                    <td>
+                        <div class="d-flex">
+                            <a class="btn btn-primary me-2" role="button" href="@GameUrl(game.Id)">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="@GetDeleteModalId(game)">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <DeleteGame Game="@game" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private GameSummary[]? games;
+    private bool loadError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            games = await Client.GetGamesAsync();
+            loadError = (games?.Length ?? 0) == 0; // Set if empty (could be API issue)
+        }
+        catch (Exception ex)
+        {
+            loadError = true;
+            games = Array.Empty<GameSummary>();
+            Console.WriteLine($"Error loading games: {ex.Message}");
+        }
+    }
+
+    private static string GameUrl(int id) => $"/editgame/{id}";
+
+    private string GetDeleteModalId(GameSummary game)
+    {
+        return $"#{DeleteGame.GetModalId(game)}";
+    }
+}

@@ -1,0 +1,143 @@
+﻿@page "/editgame"
+@page "/editgame/{id:int}"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject GamesClient GamesClient
+@inject GenresClient GenresClient
+@inject IJSRuntime JSRuntime
+@using GameStore.Frontend.Models
+
+<PageTitle>Edit Game</PageTitle>
+<h3>@(Id is null ? "New Game" : $"Edit {game?.Name}")</h3>
+
+@if (loadError)
+{
+    <div class="alert alert-danger">
+        Failed to load data. Check if backend API is running.
+    </div>
+}
+else if (genres is null || game is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="@game" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="game.Name" class="form-control" />
+                    <ValidationMessage For="() => game.Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="genre" class="form-label">Genre:</label>
+                    <InputSelect id="genre" @bind-Value="game.GenreId" class="form-select">
+                        <option value="">Select a genre</option>
+                        @foreach (var genre in genres)
+                        {
+                            <option value="@genre.Id">@genre.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="() => game.GenreId" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price:</label>
+                    <InputNumber id="price" @bind-Value="game.Price" class="form-control" />
+                    <ValidationMessage For="() => game.Price" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="releaseDate" class="form-label">Release Date:</label>
+                    <InputDate id="releaseDate" @bind-Value="game.ReleaseDate" class="form-control" />
+                    <ValidationMessage For="() => game.ReleaseDate" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a role="button" class="btn btn-secondary" href="/">Cancel</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private GameDetails? game;
+    private Genre[]? genres;
+    private bool loadError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            genres = await GenresClient.GetGenresAsync();
+            if (genres is null || genres.Length == 0) loadError = true;
+        }
+        catch (Exception ex)
+        {
+            loadError = true;
+            Console.WriteLine($"Error loading genres: {ex.Message}");
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (loadError) return;
+
+        if (Id.HasValue)
+        {
+            try
+            {
+                game = await GamesClient.GetGameAsync(Id.Value);
+                if (game is null) loadError = true;
+            }
+            catch (Exception ex)
+            {
+                loadError = true;
+                Console.WriteLine($"Error loading game: {ex.Message}");
+            }
+        }
+        else
+        {
+            game = new GameDetails
+            {
+                Name = string.Empty,
+                ReleaseDate = DateOnly.FromDateTime(DateTime.Today)
+            };
+        }
+        StateHasChanged();
+    }
+
+    private async Task HandleSubmit()
+    {
+        ArgumentNullException.ThrowIfNull(game);
+
+        try
+        {
+            if (Id is null)
+            {
+                await GamesClient.AddGameAsync(game);
+            }
+            else
+            {
+                game.Id = Id.Value;
+                await GamesClient.UpdateGameAsync(game);
+            }
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            loadError = true; // Show error UI
+            Console.WriteLine($"Error saving game: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", "Save failed—check backend connection.");
+            StateHasChanged();
+        }
+    }
+}
